@@ -38,16 +38,19 @@ export async function run(config: Config, reporter: Reporter, flags: Object, arg
   const maxLengthArr = {
     name: 'name'.length,
     current: 'from'.length,
-    range: 'range'.length,
+    range: 'latest'.length,
     [outdatedFieldName]: 'to'.length,
   };
 
-  if (flags.latest) {
-    maxLengthArr.range = 'latest'.length;
+  const keysWithDynamicLength = ['name', 'current', outdatedFieldName];
+
+  if (!flags.latest) {
+    maxLengthArr.range = 'range'.length;
+    keysWithDynamicLength.push('range');
   }
 
   deps.forEach(dep =>
-    ['name', 'current', 'range', outdatedFieldName].forEach(key => {
+    keysWithDynamicLength.forEach(key => {
       maxLengthArr[key] = Math.max(maxLengthArr[key], dep[key].length);
     }),
   );
